@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Kids' World Flag Adventure!</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #a1c4fd 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    .bg-bubble {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.35);
+      animation: float 8s infinite ease-in-out;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(180deg); }
+    }
+
+    header {
+      z-index: 10;
+      text-align: center;
+      margin-top: 5px;
+    }
+
+    h1 {
+      font-family: 'Fredoka One', cursive;
+      font-size: 28px;
+      color: #ff3366;
+      text-shadow: 2px 2px 0px #fff, 4px 4px 0px rgba(0,0,0,0.1);
+      letter-spacing: 1px;
+    }
+
+    .counter-badge {
+      background: #ffcc00;
+      color: #444;
+      font-family: 'Fredoka One', cursive;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 14px;
+      display: inline-block;
+      margin-top: 6px;
+      box-shadow: 0 4px 0 #e6b800;
+    }
+
+    .card-container {
+      z-index: 10;
+      width: 100%;
+      max-width: 360px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      margin: auto 0;
+    }
+
+    .name-reveal-box {
+      width: 100%;
+      min-height: 80px;
+      background: #ffffff;
+      border: 4px solid #4facfe;
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      opacity: 0;
+      transform: translateY(10px) scale(0.95);
+      padding: 10px 15px;
+      text-align: center;
+    }
+
+    .name-reveal-box.visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .country-name {
+      font-family: 'Fredoka One', cursive;
+      font-size: 26px;
+      color: #00c6ff;
+      text-shadow: 1px 1px 0px #0072ff;
+    }
+
+    .country-fact {
+      font-size: 13px;
+      color: #555;
+      font-weight: 700;
+      margin-top: 4px;
+      line-height: 1.3;
+    }
+
+    .flag-card {
+      width: 100%;
+      height: 220px;
+      background: #ffffff;
+      border-radius: 24px;
+      border: 6px solid #fff;
+      box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      overflow: hidden;
+      position: relative;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .flag-card:active {
+      transform: scale(0.96);
+    }
+
+    .flag-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 18px;
+    }
+
+    .tap-hint {
+      position: absolute;
+      bottom: 12px;
+      background: rgba(0, 0, 0, 0.65);
+      color: #fff;
+      font-family: 'Fredoka One', cursive;
+      padding: 6px 16px;
+      border-radius: 30px;
+      font-size: 14px;
+      animation: pulse 1.5s infinite;
+      pointer-events: none;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+
+    .controls {
+      z-index: 10;
+      width: 100%;
+      max-width: 360px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .nav-buttons-row {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .btn {
+      font-family: 'Fredoka One', cursive;
+      font-size: 18px;
+      padding: 14px 15px;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+      transition: all 0.1s ease;
+      color: white;
+      width: 100%;
+    }
+
+    .btn:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 rgba(0,0,0,0.2);
+    }
+
+    .btn-repeat {
+      background: #ff9900;
+      box-shadow: 0 6px 0 #cc7a00;
+      display: none;
+      font-size: 20px;
+    }
+
+    .btn-prev {
+      background: #6c5ce7;
+      box-shadow: 0 6px 0 #4b38b3;
+      flex: 1;
+    }
+
+    .btn-prev:disabled {
+      background: #b2bec3;
+      box-shadow: 0 6px 0 #636e72;
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .btn-next {
+      background: #00b894;
+      box-shadow: 0 6px 0 #00866c;
+      flex: 1;
+    }
+
+    .sparkle {
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background decorative elements -->
+  <div class="bg-bubble" style="width: 80px; height: 80px; top: 8%; left: 5%;"></div>
+  <div class="bg-bubble" style="width: 120px; height: 120px; bottom: 15%; right: 5%; animation-delay: 2s;"></div>
+  <div class="bg-bubble" style="width: 60px; height: 60px; top: 60%; left: 80%; animation-delay: 4s;"></div>
+
+  <!-- Header -->
+  <header>
+    <h1>🚩 Guess The Flag! 🌍</h1>
+    <div class="counter-badge" id="counter-badge">Flag 1 of 100</div>
+  </header>
+
+  <div class="card-container">
+    <div class="name-reveal-box" id="reveal-box">
+      <div class="country-name" id="country-name">???</div>
+      <div class="country-fact" id="country-fact">Tap the flag to reveal!</div>
+    </div>
+
+    <div class="flag-card" id="flag-card" onclick="revealFlag()">
+      <img src="" id="flag-img" class="flag-img" alt="Flag">
+      <div class="tap-hint" id="tap-hint">👆 Tap to Reveal!</div>
+    </div>
+  </div>
+
+  <!-- Navigation and Sound repeat controls -->
+  <div class="controls">
+    <button class="btn btn-repeat" id="repeat-btn" onclick="repeatVoice()">
+      <span class="sparkle">🔊</span> Listen Again!
+    </button>
+
+    <div class="nav-buttons-row">
+      <button class="btn btn-prev" id="prev-btn" onclick="prevFlag()">
+        <span class="sparkle">◀</span> Prev
+      </button>
+
+      <button class="btn btn-next" onclick="nextFlag()">
+        Next <span class="sparkle">▶</span>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const countries = [
+      // 48 Asian Countries
+      { name: "Afghanistan", code: "af", fact: " famous for beautiful mountains! 🏔️" },
+      { name: "Armenia", code: "am", fact: " home of Mount Ararat! ⛰️" },
+      { name: "Azerbaijan", code: "az", fact: " known as the Land of Fire! 🔥" },
+      { name: "Bahrain", code: "bh", fact: " a lovely island nation! 🏝️" },
+      { name: "Bangladesh", code: "bd", fact: " home of the Royal Bengal Tiger! 🐯" },
+      { name: "Bhutan", code: "bt", fact: " the Land of the Thunder Dragon! 🐉" },
+      { name: "Brunei", code: "bn", fact: " famous for golden palaces! 🕌" },
+      { name: "Cambodia", code: "kh", fact: " home of the giant Angkor Wat temple! 🏛️" },
+      { name: "China", code: "cn", fact: " home of cute Giant Pandas! 🐼" },
+      { name: "Cyprus", code: "cy", fact: " a sunny island in the sea! ☀️" },
+      { name: "Georgia", code: "ge", fact: " famous for delicious cheese bread! 🧀" },
+      { name: "India", code: "in", fact: " home of the beautiful Taj Mahal! 🕌" },
+      { name: "Indonesia", code: "id", fact: " made of thousands of islands! 🏝️" },
+      { name: "Iran", code: "ir", fact: " famous for Persian rugs and cats! 🐱" },
+      { name: "Iraq", code: "iq", fact: " home of ancient history! 📜" },
+      { name: "Israel", code: "il", fact: " home of the Dead Sea! 🌊" },
+      { name: "Japan", code: "jp", fact: " land of Cherry Blossoms! 🌸" },
+      { name: "Jordan", code: "jo", fact: " home of the ancient city Petra! 🏛️" },
+      { name: "Kazakhstan", code: "kz", fact: " the biggest landlocked country! 🦅" },
+      { name: "Kuwait", code: "kw", fact: " famous for Kuwait Towers! 🗼" },
+      { name: "Kyrgyzstan", code: "kg", fact: " beautiful high mountains and horses! 🐎" },
+      { name: "Laos", code: "la", fact: " known as the Land of a Million Elephants! 🐘" },
+      { name: "Lebanon", code: "lb", fact: " famous for cedar trees! 🌲" },
+      { name: "Malaysia", code: "my", fact: " home of the tall Petronas Twin Towers! 🏙️" },
+      { name: "Maldives", code: "mv", fact: " beautiful blue ocean water! 🐠" },
+      { name: "Mongolia", code: "mn", fact: " land of green hills and horses! 🐴" },
+      { name: "Myanmar", code: "mm", fact: " land of golden temples! 🛕" },
+      { name: "Nepal", code: "np", fact: " home of Mount Everest, the highest peak! 🏔️" },
+      { name: "North Korea", code: "kp", fact: " famous for big mountain ranges! ⛰️" },
+      { name: "Oman", code: "om", fact: " famous for frankincense and castles! 🏰" },
+      { name: "Pakistan", code: "pk", fact: " home of high snowy mountain peaks! 🏔️" },
+      { name: "Palestine", code: "ps", fact: " home of ancient history and olive trees! 🫒" },
+      { name: "Philippines", code: "ph", fact: " famous for 7,000 blue islands! 🏖️" },
+      { name: "Qatar", code: "qa", fact: " home of amazing futuristic towers! 🏙️" },
+      { name: "Saudi Arabia", code: "sa", fact: " land of golden desert dunes! 🐪" },
+      { name: "Singapore", code: "sg", fact: " famous for the Lion City fountain! 🦁" },
+      { name: "South Korea", code: "kr", fact: " home of K-pop and delicious Kimchi! 🇰🇷" },
+      { name: "Sri Lanka", code: "lk", fact: " known as the Teardrop of India! 🍃" },
+      { name: "Syria", code: "sy", fact: " land of ancient olive gardens! 🫒" },
+      { name: "Taiwan", code: "tw", fact: " famous for delicious night markets! 🧋" },
+      { name: "Tajikistan", code: "tj", fact: " surrounded by huge snowy mountains! 🏔️" },
+      { name: "Thailand", code: "th", fact: " land of smiles and friendly elephants! 🐘" },
+      { name: "Timor-Leste", code: "tl", fact: " beautiful coral reef beaches! 🪸" },
+      { name: "Turkey", code: "tr", fact: " famous for colorful hot air balloons! 🎈" },
+      { name: "Turkmenistan", code: "tm", fact: " famous for fast Akhal-Teke horses! 🐎" },
+      { name: "United Arab Emirates", code: "ae", fact: " home of the tallest tower, Burj Khalifa! 🏙️" },
+      { name: "Uzbekistan", code: "uz", fact: " famous for blue tiled domes! 🕌" },
+      { name: "Vietnam", code: "vn", fact: " land of dragon legends and noodle soup! 🍜" },
+      { name: "Yemen", code: "ye", fact: " famous for ancient mud skyscraper cities! 🏰" },
+
+      // Additional Major Global Nations (Making 100 countries)
+      { name: "United States", code: "us", fact: " home of the Statue of Liberty! 🗽" },
+      { name: "United Kingdom", code: "gb", fact: " home of Big Ben and royal castles! 🏰" },
+      { name: "Canada", code: "ca", fact: " home of friendly Beavers & Maple syrup! 🍁" },
+      { name: "Australia", code: "au", fact: " home of Kangaroos and Koalas! 🦘" },
+      { name: "Brazil", code: "br", fact: " home of the huge Amazon Rainforest! 🐆" },
+      { name: "France", code: "fr", fact: " home of the tall Eiffel Tower! 🗼" },
+      { name: "Germany", code: "de", fact: " home of fairy tale castles! 🏰" },
+      { name: "Italy", code: "it", fact: " land of yummy Pizza and Pasta! 🍕" },
+      { name: "Egypt", code: "eg", fact: " land of ancient Pyramids! 📐" },
+      { name: "South Africa", code: "za", fact: " home of wild Lions & Elephants! 🦁" },
+      { name: "Mexico", code: "mx", fact: " famous for colorful Tacos! 🌮" },
+      { name: "Spain", code: "es", fact: " land of sunny beaches and Flamenco dancing! 💃" },
+      { name: "Argentina", code: "ar", fact: " famous for soccer and high mountains! ⚽" },
+      { name: "New Zealand", code: "nz", fact: " home of cute Kiwi birds! 🥝" },
+      { name: "Greece", code: "gr", fact: " land of ancient myths & blue seas! 🏛️" },
+      { name: "Switzerland", code: "ch", fact: " famous for tasty Chocolate and Alps! 🍫" },
+      { name: "Netherlands", code: "nl", fact: " land of Windmills and colorful Tulips! 🌷" },
+      { name: "Sweden", code: "se", fact: " home of Moose and Northern Lights! 🌌" },
+      { name: "Norway", code: "no", fact: " land of Vikings and fjords! ⚔️" },
+      { name: "Kenya", code: "ke", fact: " home of fast Cheetahs and wild Safaris! 🐆" },
+      { name: "Nigeria", code: "ng", fact: " giant of Africa with music & film! 🎵" },
+      { name: "Morocco", code: "ma", fact: " land of colorful spice markets! 🌶️" },
+      { name: "Peru", code: "pe", fact: " home of fluffy Llamas and Machu Picchu! 🦙" },
+      { name: "Colombia", code: "co", fact: " land of colorful Butterflies and Coffee! 🦋" },
+      { name: "Jamaica", code: "jm", fact: " island of fast runners and reggae music! 🏃" },
+      { name: "Ireland", code: "ie", fact: " land of green shamrocks and castles! ☘️" },
+      { name: "Portugal", code: "pt", fact: " famous for delicious egg tarts! 🥧" },
+      { name: "Belgium", code: "be", fact: " land of crispy Waffles! 🧇" },
+      { name: "Denmark", code: "dk", fact: " home of colorful LEGO bricks! 🧱" },
+      { name: "Finland", code: "fi", fact: " official home of Santa Claus! 🎅" },
+      { name: "Iceland", code: "is", fact: " land of ice glaciers and hot geysers! 🧊" },
+      { name: "Poland", code: "pl", fact: " land of ancient amber gold! 💎" },
+      { name: "Austria", code: "at", fact: " land of classical music and snowy peaks! 🎻" },
+      { name: "Chile", code: "cl", fact: " the longest thin country in the world! 🌶️" },
+      { name: "Cuba", code: "cu", fact: " island of classic colorful cars! 🚗" },
+      { name: "Madagascar", code: "mg", fact: " island of funny Lemurs and Baobabs! 🐒" },
+      { name: "Tanzania", code: "tz", fact: " home of Mount Kilimanjaro! 🏔️" },
+      { name: "Costa Rica", code: "cr", fact: " home of friendly slow Sloths! 🦥" },
+      { name: "Fiji", code: "fj", fact: " paradise island with blue coral reefs! 🏝️" },
+      { name: "Ecuador", code: "ec", fact: " home of giant Galapagos tortoises! 🐢" },
+      { name: "Panama", code: "pa", fact: " famous for the huge Panama Canal! 🚢" },
+      { name: "Croatia", code: "hr", fact: " land of 1,000 islands and waterfalls! 🌊" },
+      { name: "Hungary", code: "hu", fact: " famous for beautiful river bridges! 🌉" },
+      { name: "Czech Republic", code: "cz", fact: " land of medieval castles! 🏰" },
+      { name: "Uruguay", code: "uy", fact: " famous for sunny beaches and soccer! ⚽" },
+      { name: "Ethiopia", code: "et", fact: " origin of coffee beans! ☕" },
+      { name: "Ghana", code: "gh", fact: " famous for sweet cocoa and chocolate! 🍫" },
+      { name: "Samoa", code: "ws", fact: " tropical Pacific island paradise! 🌺" },
+      { name: "Monaco", code: "mc", fact: " tiny nation famous for race cars! 🏎️" },
+      { name: "Vatican City", code: "va", fact: " smallest country in the world! ⛪" }
+    ];
+
+    let currentIndex = 0;
+    let isRevealed = false;
+    let voices = [];
+
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    let audioCtx;
+
+    function getAudioCtx() {
+      if (!audioCtx) audioCtx = new AudioContext();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    function playSound(type) {
+      try {
+        const ctx = getAudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        if (type === 'pop') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(300, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.15);
+          gain.gain.setValueAtTime(0.3, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.15);
+        } else if (type === 'chime') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+          osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1);
+          osc.frequency.setValueAtTime(783.99, ctx.currentTime + 0.2);
+          gain.gain.setValueAtTime(0.2, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.4);
+        } else if (type === 'swoosh') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(600, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.2);
+          gain.gain.setValueAtTime(0.2, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.2);
+        }
+      } catch (e) {
+        console.log("Audio play error", e);
+      }
+    }
+
+    function initVoices() {
+      if ('speechSynthesis' in window) {
+        voices = window.speechSynthesis.getVoices();
+      }
+    }
+
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = initVoices;
+      initVoices();
+    }
+
+    function speakText(text) {
+      if (!('speechSynthesis' in window)) return;
+
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 0.85;
+      utterance.pitch = 1.2;
+
+      if (voices.length === 0) {
+        voices = window.speechSynthesis.getVoices();
+      }
+
+      let femaleVoice = voices.find(v => 
+        (v.lang.startsWith('en')) && 
+        (v.name.includes('Samantha') || v.name.includes('Victoria') || v.name.includes('Karen') || v.name.includes('Zira') || v.name.toLowerCase().includes('female'))
+      );
+
+      if (!femaleVoice) {
+        femaleVoice = voices.find(v => v.lang.startsWith('en'));
+      }
+
+      if (femaleVoice) {
+        utterance.voice = femaleVoice;
+      }
+
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    function initGame() {
+      shuffle(countries);
+      currentIndex = 0;
+      loadFlag();
+    }
+
+    function loadFlag() {
+      isRevealed = false;
+      const current = countries[currentIndex];
+      
+      document.getElementById('counter-badge').innerText = `Flag ${currentIndex + 1} of ${countries.length}`;
+
+      const revealBox = document.getElementById('reveal-box');
+      revealBox.classList.remove('visible');
+      document.getElementById('country-name').innerText = "???";
+      document.getElementById('country-fact').innerText = "Tap the flag to reveal!";
+
+      const flagImg = document.getElementById('flag-img');
+      flagImg.src = `https://flagcdn.com/w640/${current.code}.png`;
+      document.getElementById('tap-hint').style.display = 'block';
+
+      document.getElementById('repeat-btn').style.display = 'none';
+
+      // Update Prev button disabled state
+      const prevBtn = document.getElementById('prev-btn');
+      if (currentIndex === 0) {
+        prevBtn.disabled = true;
+      } else {
+        prevBtn.disabled = false;
+      }
+    }
+
+    function revealFlag() {
+      if (isRevealed) return;
+      isRevealed = true;
+
+      const current = countries[currentIndex];
+
+      playSound('chime');
+
+      document.getElementById('country-name').innerText = current.name;
+      document.getElementById('country-fact').innerText = current.fact;
+      document.getElementById('reveal-box').classList.add('visible');
+      document.getElementById('tap-hint').style.display = 'none';
+
+      document.getElementById('repeat-btn').style.display = 'flex';
+
+      speakText(current.name);
+    }
+
+    function repeatVoice() {
+      playSound('pop');
+      const current = countries[currentIndex];
+      speakText(current.name);
+    }
+
+    function nextFlag() {
+      playSound('swoosh');
+      currentIndex++;
+      if (currentIndex >= countries.length) {
+        currentIndex = 0;
+        shuffle(countries);
+      }
+      loadFlag();
+    }
+
+    function prevFlag() {
+      if (currentIndex > 0) {
+        playSound('swoosh');
+        currentIndex--;
+        loadFlag();
+      }
+    }
+
+    window.onload = initGame;
+  </script>
+</body>
+</html>
